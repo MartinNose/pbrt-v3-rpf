@@ -45,7 +45,7 @@ void preprocessSamples(FeatureVector* samples, int b, size_t maxNumOfSamples,
 	// Compute mean (mfP) and standard deviation (σfP) of the features of samples in pixel P for clustering
 
 	// Add samples to neighborhood
-    for (int q = 0; q < maxNumOfSamples − spp; q++) {
+    for (int q = 0; q < maxNumOfSamples - spp; q++) {
 		// Select a random sample j from samples inside the box but outside P with distribution based on σp
         flag = true;
         // Perform clustering
