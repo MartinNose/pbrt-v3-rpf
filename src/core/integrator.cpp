@@ -42,6 +42,7 @@
 #include "progressreporter.h"
 #include "camera.h"
 #include "stats.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -235,6 +236,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
     const int tileSize = 16;
     Point2i nTiles((sampleExtent.x + tileSize - 1) / tileSize,
                    (sampleExtent.y + tileSize - 1) / tileSize);
+    FeatureVector::initialize(sampleExtent.x, sampleExtent.y, sampler->samplesPerPixel); //TODO
     ProgressReporter reporter(nTiles.x * nTiles.y, "Rendering");
     {
         ParallelFor2D([&](Point2i tile) {
@@ -277,7 +279,12 @@ void SamplerIntegrator::Render(const Scene &scene) {
                     // Initialize _CameraSample_ for current sample
                     CameraSample cameraSample =
                         tileSampler->GetCameraSample(pixel);
-
+                    // TODO sample xy uv time coordinate
+                    FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), U_COORD, cameraSample.pLens.x);
+                    FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), V_COORD, cameraSample.pLens.y);
+                    FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), X_COORD, cameraSample.pFilm.x);
+                    FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), Y_COORD, cameraSample.pFilm.y);
+                    FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), TIME, cameraSample.time);
                     // Generate camera ray for current sample
                     RayDifferential ray;
                     Float rayWeight =
@@ -336,6 +343,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
 
     // Save final image after rendering
     camera->film->WriteImage();
+    // FeatureVector<float>::write_dat();
 }
 
 Spectrum SamplerIntegrator::SpecularReflect(

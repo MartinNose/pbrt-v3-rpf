@@ -1,35 +1,51 @@
 #pragma once
 
-template<typename Scalar = float>
+#ifndef _SRC_FEATUREVECTOR_
+#define _SRC_FEATUREVECTOR_
+
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include "pbrt.h"
+#include "geometry.h"
+#include "global.h"
+
+using namespace pbrt;
 class FeatureVector {
-public:
-    void initialize(size_t width, size_t height, size_t spp);
-
-    Scalar getPosition(size_t x, size_t y, size_t k, OFFSET offset);
-    Scalar getColor(size_t x, size_t y, size_t k, OFFSET offset);
-    Scalar getFeature(size_t x, size_t y, size_t k, OFFSET offset);
-    Scalar getRandomParameter(size_t x, size_t y, size_t k, OFFSET offset);
-
-	Scalar setPosition(size_t x, size_t y, size_t k, Scalar position, OFFSET offset);
-	Scalar setColor(size_t x, size_t y, size_t k, Scalar color, OFFSET offset);
-	Scalar setFeature(size_t x, size_t y, size_t k, Scalar* features, OFFSET offset, size_t size);
-	Scalar setFeature(size_t index, Scalar feature);
-	Scalar setRandomParameter(size_t x, size_t y, size_t k, Scalar randomParameter, OFFSET offset);
-
-    void setWidth(size_t width);
-    void setHeight(size_t height);
-    void setSamplesPerPixel(size_t samplesPerPixel);
-
 private:
+    // static float* positions;
+    // static float* colors;
+    // static float* features;
+    static float* randomParameters;
+
+    static size_t width;
+    static size_t height;
+    static size_t spp;
+    static bool isInitialized;
+public:
     FeatureVector();
     ~FeatureVector();
 
-    Scalar* positions;
-    Scalar* colors;
-    Scalar* features;
-    Scalar* randomParameters;
+    static void initialize(size_t _width, size_t _height, size_t _spp);
+    static float getPosition(size_t x, size_t y, size_t k, OFFSET offset);
+    static float getColor(size_t x, size_t y, size_t k, OFFSET offset);
+    static float getFeature(size_t x, size_t y, size_t k, OFFSET offset);
+    static float getRandomParameter(size_t x, size_t y, size_t k, OFFSET offset);
 
-    size_t width;
-    size_t height;
-    size_t spp;
+	static void setPosition(size_t x, size_t y, size_t k, float* positions);
+	static void setPosition(size_t x, size_t y, size_t k, Point3f &position);
+	static void setNormal(size_t x, size_t y, size_t k, Point3f &normal);
+	static void setColor(size_t x, size_t y, size_t k, float* colors);
+    static void setTexture(size_t x, size_t y, size_t k, Spectrum r);
+	// static void setColor(size_t x, size_t y, size_t k, float* colors);
+	// static float setFeature(size_t x, size_t y, size_t k, float* features);
+	static void setRandomParameter(size_t x, size_t y, size_t k, OFFSET offset, float para);
+
+    static void write_dat();
+
+    // static void setWidth(size_t width);
+    // static void setHeight(size_t height);
+    // static void setSamplesPerPixel(size_t samplesPerPixel);
 };
+
+#endif

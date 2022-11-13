@@ -154,6 +154,7 @@ class SurfaceInteraction : public Interaction {
     // index with an intersection point for use in Ptex texture lookups.
     // If Ptex isn't being used, then this value is ignored.
     int faceIndex = 0;
+    int x, y, sppIdx;
 };
 
 }  // namespace pbrt
