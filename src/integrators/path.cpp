@@ -64,6 +64,7 @@ void PathIntegrator::Preprocess(const Scene &scene, Sampler &sampler) {
 Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                             Sampler &sampler, MemoryArena &arena,
                             int depth) const {
+    //TODO
     ProfilePhase p(Prof::SamplerIntegratorLi);
     Spectrum L(0.f), beta(1.f);
     RayDifferential ray(r);
@@ -91,7 +92,13 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         if (bounces == 0 || specularBounce) {
             // Add emitted light at path vertex or from the environment
             if (foundIntersection) {
-                L += beta * isect.Le(-ray.d);
+                L += beta * isect.Le(-ray.d); 
+                // FeatureVector: World, normal, texture
+                int x, y, k;
+                // FeatureVector::setPosition(sampler.currentPixel.x, sampler.currentPixel.y, sampler.currentPixelSampleIndex, isect.p); TODO
+                // FeatureVector::setNormal(sampler.currentPixel.y, sampler.currentPixel.y, sampler.currentPixelSampleIndex, isect.n); TODO
+                // FeatureVector::setTexture(sampler.currentPixel.y, sampler.currentPixel.y, sampler.currentPixelSampleIndex, )
+                // TODO Texture
                 VLOG(2) << "Added Le -> L = " << L;
             } else {
                 for (const auto &light : scene.infiniteLights)
@@ -104,6 +111,10 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         if (!foundIntersection || bounces >= maxDepth) break;
 
         // Compute scattering functions and skip over medium boundaries
+        isect.x = sampler.getCurrentPixel().x;
+        isect.y = sampler.getCurrentPixel().y;
+        isect.sppIdx = sampler.CurrentSampleNumber();
+        
         isect.ComputeScatteringFunctions(ray, arena, true);
         if (!isect.bsdf) {
             VLOG(2) << "Skipping intersection due to null bsdf";
@@ -111,7 +122,7 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
             bounces--;
             continue;
         }
-
+      // isect.bsdf.bxdfs.R -> color
         const Distribution1D *distrib = lightDistribution->Lookup(isect.p);
 
         // Sample illumination from lights to find path contribution.
@@ -184,7 +195,8 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         }
     }
     ReportValue(pathLength, bounces);
-    return L;
+    // FeatureVector<float>::setColor();
+    return L; 
 }
 
 PathIntegrator *CreatePathIntegrator(const ParamSet &params,
