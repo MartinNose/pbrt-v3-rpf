@@ -37,6 +37,8 @@
 #include "parser.h"
 #include "parallel.h"
 #include <glog/logging.h>
+#include "FeatureVector/FeatureVector.h"
+
 
 using namespace pbrt;
 
@@ -77,6 +79,7 @@ int main(int argc, char *argv[]) {
     google::InitGoogleLogging(argv[0]);
     FLAGS_stderrthreshold = 1; // Warning and above.
 
+    // FeatureVector FV;
     Options options;
     std::vector<std::string> filenames;
     // Process command-line arguments

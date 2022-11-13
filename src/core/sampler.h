@@ -69,6 +69,7 @@ class Sampler {
                           currentPixel.y, currentPixelSampleIndex);
     }
     int64_t CurrentSampleNumber() const { return currentPixelSampleIndex; }
+    Point2i getCurrentPixel() const { return currentPixel; }
 
     // Sampler Public Data
     const int64_t samplesPerPixel;
