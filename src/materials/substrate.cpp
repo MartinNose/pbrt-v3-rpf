@@ -38,6 +38,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -52,6 +53,8 @@ void SubstrateMaterial::ComputeScatteringFunctions(
     Spectrum s = Ks->Evaluate(*si).Clamp();
     Float roughu = nu->Evaluate(*si);
     Float roughv = nv->Evaluate(*si);
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, d);
 
     if (!d.IsBlack() || !s.IsBlack()) {
         if (remapRoughness) {

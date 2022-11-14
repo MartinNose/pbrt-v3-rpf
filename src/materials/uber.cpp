@@ -38,6 +38,7 @@
 #include "texture.h"
 #include "interaction.h"
 #include "paramset.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -93,6 +94,9 @@ void UberMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
         Fresnel *fresnel = ARENA_ALLOC(arena, FresnelDielectric)(1.f, e);
         si->bsdf->Add(ARENA_ALLOC(arena, SpecularReflection)(kr, fresnel));
     }
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, kr);
+
 
     Spectrum kt = op * Kt->Evaluate(*si).Clamp();
     if (!kt.IsBlack())

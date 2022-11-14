@@ -38,6 +38,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -50,6 +51,9 @@ void PlasticMaterial::ComputeScatteringFunctions(
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
     // Initialize diffuse component of plastic material
     Spectrum kd = Kd->Evaluate(*si).Clamp();
+    
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, kd);
+
     if (!kd.IsBlack())
         si->bsdf->Add(ARENA_ALLOC(arena, LambertianReflection)(kd));
 

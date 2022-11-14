@@ -38,6 +38,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -62,6 +63,9 @@ void TranslucentMaterial::ComputeScatteringFunctions(
             si->bsdf->Add(ARENA_ALLOC(arena, LambertianTransmission)(t * kd));
     }
     Spectrum ks = Ks->Evaluate(*si).Clamp();
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, r);
+
     if (!ks.IsBlack() && (!r.IsBlack() || !t.IsBlack())) {
         Float rough = roughness->Evaluate(*si);
         if (remapRoughness)
