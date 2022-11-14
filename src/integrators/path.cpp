@@ -99,7 +99,7 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
                 L += beta * isect.Le(-ray.d); 
                 int x, y, k;
                 FeatureVector::setPosition(pixel.x, pixel.y, index, isect.p);
-                FeatureVector::setNormal(pixel.y, pixel.y, index, isect.n);
+                FeatureVector::setNormal(pixel.x, pixel.y, index, isect.n);
                 VLOG(2) << "Added Le -> L = " << L;
             } else {
                 for (const auto &light : scene.infiniteLights)
