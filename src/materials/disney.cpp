@@ -57,6 +57,7 @@ licensed under a slightly-modified Apache 2.0 license.
 #include "stringprint.h"
 #include "texture.h"
 #include "rng.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -483,6 +484,9 @@ void DisneyMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
 
     // Diffuse
     Spectrum c = color->Evaluate(*si).Clamp();
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, c);
+    
     Float metallicWeight = metallic->Evaluate(*si);
     Float e = eta->Evaluate(*si);
     Float strans = specTrans->Evaluate(*si);

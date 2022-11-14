@@ -38,6 +38,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -50,6 +51,9 @@ void MirrorMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     if (bumpMap) Bump(bumpMap, si);
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
     Spectrum R = Kr->Evaluate(*si).Clamp();
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, R);
+
     if (!R.IsBlack())
         si->bsdf->Add(ARENA_ALLOC(arena, SpecularReflection)(
             R, ARENA_ALLOC(arena, FresnelNoOp)()));

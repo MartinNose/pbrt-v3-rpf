@@ -39,6 +39,7 @@
 #include "interpolation.h"
 #include "paramset.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -54,6 +55,8 @@ void SubsurfaceMaterial::ComputeScatteringFunctions(
     Spectrum T = Kt->Evaluate(*si).Clamp();
     Float urough = uRoughness->Evaluate(*si);
     Float vrough = vRoughness->Evaluate(*si);
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, R);
 
     // Initialize _bsdf_ for smooth or rough dielectric
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si, eta);
