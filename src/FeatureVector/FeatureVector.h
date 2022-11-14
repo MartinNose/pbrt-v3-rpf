@@ -35,6 +35,7 @@ public:
 	static void setPosition(size_t x, size_t y, size_t k, float* positions);
 	static void setPosition(size_t x, size_t y, size_t k, Point3f &position);
 	static void setNormal(size_t x, size_t y, size_t k, Normal3f &normal);
+	static void setColor(size_t x, size_t y, size_t k, Spectrum &R);
 	static void setColor(size_t x, size_t y, size_t k, float* colors);
     static void setTexture(size_t x, size_t y, size_t k, Spectrum r);
 	static void setRandomParameter(size_t x, size_t y, size_t k, OFFSET offset, float para);

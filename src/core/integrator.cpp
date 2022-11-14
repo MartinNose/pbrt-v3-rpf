@@ -285,7 +285,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), X_COORD, cameraSample.pFilm.x);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), Y_COORD, cameraSample.pFilm.y);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), TIME, cameraSample.time);
-                    
+
                     // Generate camera ray for current sample
                     RayDifferential ray;
                     Float rayWeight =
@@ -326,6 +326,8 @@ void SamplerIntegrator::Render(const Scene &scene) {
 
                     // Add camera ray's contribution to image
                     filmTile->AddSample(cameraSample.pFilm, L, rayWeight);
+
+                    FeatureVector::setColor(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), L);
 
                     // Free _MemoryArena_ memory from computing image sample
                     // value

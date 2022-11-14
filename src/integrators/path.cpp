@@ -196,7 +196,6 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         }
     }
     ReportValue(pathLength, bounces);
-    // FeatureVector<float>::setColor();
     return L; 
 }
 

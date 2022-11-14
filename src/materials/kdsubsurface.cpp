@@ -38,6 +38,7 @@
 #include "texture.h"
 #include "paramset.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
