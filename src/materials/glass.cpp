@@ -38,6 +38,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -54,6 +55,9 @@ void GlassMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     Spectrum R = Kr->Evaluate(*si).Clamp();
     Spectrum T = Kt->Evaluate(*si).Clamp();
     // Initialize _bsdf_ for smooth or rough dielectric
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, R);
+
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si, eta);
 
     if (R.IsBlack() && T.IsBlack()) return;

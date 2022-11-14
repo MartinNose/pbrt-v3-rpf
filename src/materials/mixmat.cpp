@@ -39,6 +39,7 @@
 #include "paramset.h"
 #include "texture.h"
 #include "interaction.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -53,6 +54,8 @@ void MixMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     SurfaceInteraction si2 = *si;
     m1->ComputeScatteringFunctions(si, arena, mode, allowMultipleLobes);
     m2->ComputeScatteringFunctions(&si2, arena, mode, allowMultipleLobes);
+
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, s1);
 
     // Initialize _si->bsdf_ with weighted mixture of _BxDF_s
     int n1 = si->bsdf->NumComponents(), n2 = si2.bsdf->NumComponents();

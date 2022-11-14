@@ -41,6 +41,7 @@
 #include "spectrum.h"
 #include "texture.h"
 #include "textures/constant.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -149,16 +150,19 @@ void HairMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si, e);
 
     Spectrum sig_a;
-    if (sigma_a)
+    if (sigma_a) {
         sig_a = sigma_a->Evaluate(*si).Clamp();
-    else if (color) {
+        FeatureVector::setTexture(si->x, si->y, si->sppIdx, sig_a);
+    } else if (color) {
         Spectrum c = color->Evaluate(*si).Clamp();
+        FeatureVector::setTexture(si->x, si->y, si->sppIdx, c);
         sig_a = HairBSDF::SigmaAFromReflectance(c, bn);
     } else {
         CHECK(eumelanin || pheomelanin);
         sig_a = HairBSDF::SigmaAFromConcentration(
             std::max(Float(0), eumelanin ? eumelanin->Evaluate(*si) : 0),
             std::max(Float(0), pheomelanin ? pheomelanin->Evaluate(*si) : 0));
+        FeatureVector::setTexture(si->x, si->y, si->sppIdx, sig_a);
     }
 
     // Offset along width

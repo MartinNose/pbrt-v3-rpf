@@ -52,6 +52,8 @@ void KdSubsurfaceMaterial::ComputeScatteringFunctions(
     Float urough = uRoughness->Evaluate(*si);
     Float vrough = vRoughness->Evaluate(*si);
 
+    FeatureVector::setTexture(si->x, si->y, si->sppIdx, R);
+
     // Initialize _bsdf_ for smooth or rough dielectric
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si, eta);
 

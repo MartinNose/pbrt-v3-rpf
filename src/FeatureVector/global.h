@@ -30,3 +30,5 @@ enum OFFSET {
 	LIGHT_1			=	26,
 	LIGHT_2			=	27
 };
+
+#define SAMPLELENGTH 28
