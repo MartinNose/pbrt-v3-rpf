@@ -279,12 +279,13 @@ void SamplerIntegrator::Render(const Scene &scene) {
                     // Initialize _CameraSample_ for current sample
                     CameraSample cameraSample =
                         tileSampler->GetCameraSample(pixel);
-                    // TODO sample xy uv time coordinate
+
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), U_COORD, cameraSample.pLens.x);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), V_COORD, cameraSample.pLens.y);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), X_COORD, cameraSample.pFilm.x);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), Y_COORD, cameraSample.pFilm.y);
                     FeatureVector::setRandomParameter(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), TIME, cameraSample.time);
+
                     // Generate camera ray for current sample
                     RayDifferential ray;
                     Float rayWeight =
@@ -326,6 +327,8 @@ void SamplerIntegrator::Render(const Scene &scene) {
                     // Add camera ray's contribution to image
                     filmTile->AddSample(cameraSample.pFilm, L, rayWeight);
 
+                    FeatureVector::setColor(pixel.x, pixel.y, tileSampler->CurrentSampleNumber(), L);
+
                     // Free _MemoryArena_ memory from computing image sample
                     // value
                     arena.Reset();
@@ -343,7 +346,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
 
     // Save final image after rendering
     camera->film->WriteImage();
-    // FeatureVector<float>::write_dat();
+    FeatureVector::write_dat();
 }
 
 Spectrum SamplerIntegrator::SpecularReflect(

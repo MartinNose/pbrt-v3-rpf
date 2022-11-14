@@ -53,7 +53,9 @@ void MatteMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     // Evaluate textures for _MatteMaterial_ material and allocate BRDF
     si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
     Spectrum r = Kd->Evaluate(*si).Clamp();
+
     FeatureVector::setTexture(si->x, si->y, si->sppIdx, r);
+
     Float sig = Clamp(sigma->Evaluate(*si), 0, 90);
     if (!r.IsBlack()) {
         if (sig == 0)

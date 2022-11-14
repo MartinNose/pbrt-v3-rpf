@@ -39,6 +39,7 @@
 #include "paramset.h"
 #include "scene.h"
 #include "stats.h"
+#include "FeatureVector/FeatureVector.h"
 
 namespace pbrt {
 
@@ -79,6 +80,9 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
     // out of a medium and thus have their beta value increased.
     Float etaScale = 1;
 
+    auto pixel = sampler.getCurrentPixel();
+    auto index = sampler.CurrentSampleNumber();
+
     for (bounces = 0;; ++bounces) {
         // Find next path vertex and accumulate contribution
         VLOG(2) << "Path tracer bounce " << bounces << ", current L = " << L
@@ -93,12 +97,9 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
             // Add emitted light at path vertex or from the environment
             if (foundIntersection) {
                 L += beta * isect.Le(-ray.d); 
-                // FeatureVector: World, normal, texture
                 int x, y, k;
-                // FeatureVector::setPosition(sampler.currentPixel.x, sampler.currentPixel.y, sampler.currentPixelSampleIndex, isect.p); TODO
-                // FeatureVector::setNormal(sampler.currentPixel.y, sampler.currentPixel.y, sampler.currentPixelSampleIndex, isect.n); TODO
-                // FeatureVector::setTexture(sampler.currentPixel.y, sampler.currentPixel.y, sampler.currentPixelSampleIndex, )
-                // TODO Texture
+                FeatureVector::setPosition(pixel.x, pixel.y, index, isect.p);
+                FeatureVector::setNormal(pixel.y, pixel.y, index, isect.n);
                 VLOG(2) << "Added Le -> L = " << L;
             } else {
                 for (const auto &light : scene.infiniteLights)
@@ -114,7 +115,7 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         isect.x = sampler.getCurrentPixel().x;
         isect.y = sampler.getCurrentPixel().y;
         isect.sppIdx = sampler.CurrentSampleNumber();
-        
+
         isect.ComputeScatteringFunctions(ray, arena, true);
         if (!isect.bsdf) {
             VLOG(2) << "Skipping intersection due to null bsdf";
@@ -195,7 +196,6 @@ Spectrum PathIntegrator::Li(const RayDifferential &r, const Scene &scene,
         }
     }
     ReportValue(pathLength, bounces);
-    // FeatureVector<float>::setColor();
     return L; 
 }
 
