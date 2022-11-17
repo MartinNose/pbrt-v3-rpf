@@ -7,3 +7,4 @@ src/objs
 build
 .DS_Store
 *.exr
+.ipynb_checkpoints
