@@ -8,3 +8,4 @@ build
 .DS_Store
 *.exr
 .ipynb_checkpoints
+sample.dat
