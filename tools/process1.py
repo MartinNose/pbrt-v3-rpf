@@ -21,12 +21,12 @@ print(width, height, spp, SL)
 
 # %%
   # render color
-colors = np.zeros([width, height, 3])
-colors[:,:,2] = samples[:,:,0:8,2].mean(-1)
-colors[:,:,1] = samples[:,:,0:8,3].mean(-1)
-colors[:,:,0] = samples[:,:,0:8,4].mean(-1)
+raw = np.zeros([width, height, 3])
+raw[:,:,2] = samples[:,:,0:8,2].mean(-1)
+raw[:,:,1] = samples[:,:,0:8,3].mean(-1)
+raw[:,:,0] = samples[:,:,0:8,4].mean(-1)
 
-cv.imwrite('../testres/raw.jpg', colors * 255.0)
+cv.imwrite('../testres/raw.jpg', raw * 255.0)
 
 # render position
 
@@ -192,19 +192,17 @@ def filterColor(x, y, N, P, indexN, alpha, beta, Wcr):
         buffer[x, y, index] = c_pp
 
 # %%
-def boxFilter(file):
+def render(file, c):
     colors = np.zeros([width, height, 3])
-    colors[:,:,2] = color[:,:,0:8,0].mean(-1)
-    colors[:,:,1] = color[:,:,0:8,1].mean(-1)
-    colors[:,:,0] = color[:,:,0:8,2].mean(-1)
+    colors[:,:,2] = c[:,:,0:8,0].mean(-1)
+    colors[:,:,1] = c[:,:,0:8,1].mean(-1)
+    colors[:,:,0] = c[:,:,0:8,2].mean(-1)
     
-    # print(colors)
-
     cv.imwrite(file, colors * 255.0)
 
 # %%
-boxSizes = [55, 35, 17, 7]
-# boxSizes = [10, 7, 5, 3]
+# boxSizes = [55, 35, 17, 7]
+boxSizes = [10, 7, 5, 3]
 # boxSizes = [5, 3]
 # boxSizes = [10, 3]
 
@@ -219,13 +217,17 @@ for t in range(len(boxSizes)):
     for i in range(height):
         for j in range(width):
             N, P, indexN = preprocess(i, j, b, maxNumOfSamples)
-            alpha, beta, wcr = computeFeatureWeights(t, N)
+            alpha, beta, wcr = computeFeatureWeights(b, N)
             filterColor(i, j, N, P, indexN, alpha, beta, wcr)
         print(t, i, j)
     print(np.max(color - buffer))
+    print(np.argmax(color - buffer))
+    render("../testres/boxsize-" + str(t) +".jpg", normalize(color-buffer))
+    
     color = np.copy(buffer)
     print("=============")
     
-boxFilter('../testres/color.jpg')
+render('../testres/color.jpg', color)
 print(np.max(color - samples[:,:,:,2:5]))
+print(np.argmax(color - samples[:,:,:,2:5]))
 # %%
