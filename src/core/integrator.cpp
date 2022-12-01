@@ -347,6 +347,7 @@ void SamplerIntegrator::Render(const Scene &scene) {
     // Save final image after rendering
     camera->film->WriteImage();
     FeatureVector::write_dat();
+    // TODO FeatureVector::Render()
 }
 
 Spectrum SamplerIntegrator::SpecularReflect(

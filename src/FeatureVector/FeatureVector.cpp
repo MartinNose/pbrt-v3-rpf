@@ -3,6 +3,7 @@
 #include "spectrum.h"
 #include <fstream>
 #include <cstdlib>
+#include <opencv2/opencv.hpp>
 
 size_t FeatureVector::width;
 size_t FeatureVector::height;
@@ -22,6 +23,12 @@ FeatureVector::~FeatureVector() {
 }
 
 void FeatureVector::initialize(size_t _width, size_t _height, size_t _spp) {
+    cv::Mat image;
+    image = cv::imread("/Users/liujunliang/Documents/Codes/pbrt-v3-rpf/testres/raw.jpg", 1);
+    cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
+    cv::imshow("Display Image", image);
+    cv::waitKey(0);
+
     using namespace std;
     width = _width;
     height = _height;

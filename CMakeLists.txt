@@ -511,6 +511,9 @@ IF (WIN32)
   SET_TARGET_PROPERTIES ( pbrt PROPERTIES OUTPUT_NAME libpbrt )
 ENDIF()
 
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+
 SET(ALL_PBRT_LIBS
   pbrt
   ${CMAKE_THREAD_LIBS_INIT}
@@ -518,7 +521,9 @@ SET(ALL_PBRT_LIBS
   glog
   Ptex_static
   ${ZLIB_LIBRARY}
+  ${OpenCV_LIBS}
 )
+
 
 # Main renderer
 ADD_EXECUTABLE ( pbrt_exe src/main/pbrt.cpp )
@@ -526,7 +531,7 @@ ADD_SANITIZERS ( pbrt_exe )
 
 SET_TARGET_PROPERTIES ( pbrt_exe PROPERTIES OUTPUT_NAME pbrt )
 TARGET_COMPILE_FEATURES ( pbrt_exe PRIVATE ${PBRT_CXX11_FEATURES} )
-TARGET_LINK_LIBRARIES ( pbrt_exe ${ALL_PBRT_LIBS} )
+TARGET_LINK_LIBRARIES ( pbrt_exe ${ALL_PBRT_LIBS})
 
 # Tools
 ADD_EXECUTABLE ( bsdftest src/tools/bsdftest.cpp )
