@@ -27,7 +27,12 @@ raw[:,:,2] = samples[:,:,0:8,2].mean(-1)
 raw[:,:,1] = samples[:,:,0:8,3].mean(-1)
 raw[:,:,0] = samples[:,:,0:8,4].mean(-1)
 
-cv.imwrite('../testres/raw.jpg', raw * 255.0)
+startpoint = (90, 270)
+endpoint = (385, 215)
+tmp = raw * 255
+cv.rectangle(tmp, startpoint, endpoint, (0,0,255), thickness=1)
+
+cv.imwrite('../testres/raw.jpg', tmp)
 
 # render position
 
@@ -101,7 +106,7 @@ def preprocess(x, y, b, M):
     
     return N, P, indexN, setColor
 
-# %%
+
 def sumD(Dxx):
     return Dxx[0] + Dxx[1] + Dxx[2]
 
@@ -183,8 +188,12 @@ def computeFeatureWeights(t, N):
     
 
     Wcr_buf = Dcr_buf / (Dcr_buf + Dcp_buf + epsilon)
-    # alpha_buf = np.maximum(1 - 2 * (1 + 0.1 * t) * Wcr_buf, np.zeros(3))
-    alpha_buf = 1 - Wcr_buf
+    # print(Wcr_buf)
+    # alpha_buf = np.maximum(1 - 2 * (1 + 0.01 * t) * Wcr_buf, np.zeros(3))
+    alpha_buf = np.maximum(1.3 - 2 * Wcr_buf, np.zeros(3))
+    # print(alpha_buf)
+    # alpha_buf = 1 - Wcr_buf
+    # print(alpha_buf)
 
     Dfr_buf = np.indices((12,4)).transpose(1,2,0).reshape(48,2)
     Dfr_buf = np.apply_along_axis(lambda v: mutual_info(f_bar[:,v[0]], r_bar[:,v[1]]), 1, Dfr_buf).reshape(12,4)
@@ -198,13 +207,19 @@ def computeFeatureWeights(t, N):
     tot = np.sum(Dcr_buf) + np.sum(Dcp_buf) + np.sum(Dcf_buf)
     Wcf_buf = Dfc_buf / tot
     
-    beta_buf = Wcf_buf * (1 - Wfr_buf)
+    # beta_buf = Wcf_buf * (1 - Wfr_buf)
+    # print(beta_buf)
+    # print(Wcf_buf)
+    # print(Wfr_buf)
+    beta_buf = Wcf_buf * np.maximum((1.3 - 2 * Wfr_buf), np.zeros(12))
+    # print(beta_buf)
+
 
     return alpha_buf, beta_buf, Wcr_buf
 
 
 
-# %%
+
 def calc_color(index):
     pass
     
@@ -266,30 +281,32 @@ def filterColor(x, y, N, P, indexN, setColor, alpha, beta, Wcr):
     
     buffer[x, y] = wij @ setColor
     
-    
-    
-    
-    
 
-# %%
 def render(file, c):
     colors = np.zeros([width, height, 3])
     colors[:,:,2] = c[:,:,0:8,0].mean(-1)
     colors[:,:,1] = c[:,:,0:8,1].mean(-1)
     colors[:,:,0] = c[:,:,0:8,2].mean(-1)
     
-    cv.imwrite(file, colors * 255.0)
+    img = colors * 255.0
+    startpoint = (90, 270)
+    endpoint = (385, 215)
+    cv.rectangle(img, startpoint, endpoint, (0,0,255),thickness=1)
+    cv.imwrite(file, img)
 
 # %%
-# boxSizes = [55, 35, 17, 7]
+boxSizes = [55, 35, 17, 7]
 # boxSizes = [5, 3]
 # boxSizes = [10, 3]
-boxSizes = [10, 7, 5, 3]
+# boxSizes = [10, 7, 5, 3]
 
 color = samples[:,:,:,2:5]
 buffer = np.copy(color)
 
 print(np.max(color - samples[:,:,:,2:5]))
+
+def inBox(x0, y0, x1, y1, i, j):
+    return (i >= x0 and i <= x1 and j >= y0 and j <= y1)
 
 for t in range(len(boxSizes)):
     b = boxSizes[t]
@@ -299,8 +316,10 @@ for t in range(len(boxSizes)):
         fw = 0
         fc = 0
         for j in range(width):
-            # if not(j <= 0.30 * width and i <= 0.60 * height and j > 0.10 * width and i > 0.38 * height):
-                # continue
+            # if not inBox(65, 17, 100, 100 , i, j):
+            #     continue
+            # if not ((i == 82 and j == 48) or (i == 408 and j == 188) or (i == 315 and j == 140)):
+            #     continue
             tmp_c = time.time()
             N, P, indexN, setColor = preprocess(i, j, b, maxNumOfSamples)
             tmp_d = time.time()
@@ -319,13 +338,13 @@ for t in range(len(boxSizes)):
     # break
     print(np.max(color - buffer))
     print(np.argmax(color - buffer))
-    render("../testres/diff-boxsize-" + str(t) +".jpg", normalize(color-buffer))
+    render("../testres/diff-boxsize-" + str(t) +".jpg", color-buffer)
     render("../testres/boxsize-" + str(t) +".jpg", buffer)
     
     color = np.copy(buffer)
-    print("=============")
+    # print("=============")
     
 render('../testres/color.jpg', color)
-print(np.max(color - samples[:,:,:,2:5]))
-print(np.argmax(color - samples[:,:,:,2:5]))
+# print(np.max(color - samples[:,:,:,2:5]))
+# print(np.argmax(color - samples[:,:,:,2:5]))
 # %%
